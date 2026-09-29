@@ -1,0 +1,16 @@
+# Phần mở rộng CP4 — chạy 3 instance agent sau Nginx load balancer.
+#   docker compose -f docker-compose.yml -f docker-compose.scale.yml up -d --build --scale agent=3
+# Bỏ map cổng 8000 của agent (3 container không thể cùng chiếm cổng 8000 trên host);
+# mọi request đi qua nginx ở cổng 80.
+services:
+  agent:
+    ports: !reset []
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - agent
